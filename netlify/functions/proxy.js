@@ -1,9 +1,13 @@
 exports.handler = async (event) => {
-  try {
-    const targetPath = event.path.replace('/.netlify/functions/proxy', '') || '/'
-    const query = event.rawQuery ? `?${event.rawQuery}` : ''
-    const targetUrl = `https://ofd.soliq.uz${targetPath}${query}`
+  const targetPath = event.path.replace('/.netlify/functions/proxy', '') || '/'
+  const query = event.rawQuery ? `?${event.rawQuery}` : ''
+  const targetUrl = `https://ofd.soliq.uz${targetPath}${query}`
 
+  console.log('TARGET URL:', targetUrl)
+  console.log('EVENT PATH:', event.path)
+  console.log('RAW QUERY:', event.rawQuery)
+
+  try {
     const res = await fetch(targetUrl, {
       redirect: 'follow',
       headers: {
@@ -13,7 +17,12 @@ exports.handler = async (event) => {
       },
     })
 
+    console.log('RESPONSE STATUS:', res.status)
+    console.log('RESPONSE HEADERS:', JSON.stringify([...res.headers.entries()]))
+
     const body = await res.text()
+    console.log('BODY LENGTH:', body.length)
+    console.log('BODY PREVIEW:', body.slice(0, 200))
 
     return {
       statusCode: 200,
@@ -24,6 +33,8 @@ exports.handler = async (event) => {
       body,
     }
   } catch (err) {
+    console.log('ERROR:', err.message)
+    console.log('ERROR STACK:', err.stack)
     return { statusCode: 500, body: err.message }
   }
 }

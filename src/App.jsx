@@ -1,12 +1,21 @@
 import { useState } from 'react'
 
+// Cloudflare Worker deploy qilgandan keyin shu URL ni o'zgartiring:
+const CF_WORKER = import.meta.env.VITE_CF_WORKER || ''
+
 function buildFetchPath(url) {
   try {
     const u = new URL(url)
+    const isLocal = location.hostname === 'localhost'
+
     if (u.hostname === 'ofd.soliq.uz') {
-      return { path: `/proxy${u.pathname}${u.search}`, wrapped: false }
+      if (isLocal) return { path: `/proxy${u.pathname}${u.search}`, wrapped: false }
+      return { path: `${CF_WORKER}${u.pathname}${u.search}`, wrapped: false }
     }
-    return { path: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, wrapped: true }
+
+    // Boshqa saytlar
+    if (isLocal) return { path: `/ext?url=${encodeURIComponent(url)}`, wrapped: false }
+    return { path: `${CF_WORKER}/ext?url=${encodeURIComponent(url)}`, wrapped: false }
   } catch {
     return null
   }

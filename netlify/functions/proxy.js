@@ -1,5 +1,5 @@
 exports.handler = async (event) => {
-  const targetPath = event.path.replace('/.netlify/functions/proxy', '') || '/'
+  const targetPath = event.path.replace('/.netlify/functions/proxy', '').replace('/proxy', '') || '/'
   const query = event.rawQuery ? `?${event.rawQuery}` : ''
   const targetUrl = `https://ofd.soliq.uz${targetPath}${query}`
 

@@ -1,2 +1,2 @@
-/proxy/*  https://ofd.soliq.uz/:splat  200!
-/*        /index.html                   200
+/proxy/*  /.netlify/functions/proxy/:splat  200
+/*        /index.html                        200
